@@ -1,0 +1,27 @@
+<html>
+
+<body onload="dates_from_cookies()">
+  <div id="settings_area">
+    <label for="name">Name:</label>
+    <input id="name" type="text" value="Semester"></input>
+    <br>
+    <label for="start">Start date:</label>
+    <input type="date" id="start"></input>
+    <br>
+    <label for="end">End date:</label>
+    <input type="date" id="end"></input>
+    <br>
+    <button onclick="set_dates()">Set</button>
+    <br><br>
+  </div>
+  <div>
+    <label id="bar_label" for="semester_progress"></label>
+    <progress id="semester_progress" max="100"></progress>
+  </div>
+  <div id="progress_area">
+    <button onclick="show_settings()">Settings</button>
+  </div>
+
+</body>
+
+</html>
