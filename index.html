@@ -1,27 +1,78 @@
-<html>
+ 
+function set_dates() {
+  let start_date = new Number();
+  let end_date = new Number();
+  let today = Date.now();
 
-<body onload="dates_from_cookies()">
-  <div id="settings_area">
-    <label for="name">Name:</label>
-    <input id="name" type="text" value="Semester"></input>
-    <br>
-    <label for="start">Start date:</label>
-    <input type="date" id="start"></input>
-    <br>
-    <label for="end">End date:</label>
-    <input type="date" id="end"></input>
-    <br>
-    <button onclick="set_dates()">Set</button>
-    <br><br>
-  </div>
-  <div>
-    <label id="bar_label" for="semester_progress"></label>
-    <progress id="semester_progress" max="100"></progress>
-  </div>
-  <div id="progress_area">
-    <button onclick="show_settings()">Settings</button>
-  </div>
+  start_date = document.getElementById("start").valueAsNumber;
+  end_date = document.getElementById("end").valueAsNumber;
+  let name = document.getElementById("name").value;
 
-</body>
+  //add a ":" if there isn't one already
+  if (name.charAt(name.length-1) != ":"){
+    name = name + ":";
+  }
 
-</html>
+  let progress = 100 * (today - start_date)/(end_date - start_date);
+
+  if (progress > 0) {
+    //update label and date
+    document.getElementById("semester_progress").value = progress;
+    document.getElementById("bar_label").innerHTML = name;
+    //set the cookies
+    let cookie_expiration = 10 + ((end_date - today) / (24*60*60*1000)); //clear the cookies 10 days after the end date
+    setCookie("start_date", start_date, cookie_expiration);
+    setCookie("end_date", end_date, cookie_expiration);
+    setCookie("name", name, cookie_expiration);
+    //hide start and end date selection, show button to display it
+    document.getElementById("settings_area").style.display = "none";
+    document.getElementById("progress_area").style.display = "block";
+  }
+}
+
+function dates_from_cookies() {
+  let c_start_date = getCookie("start_date");
+  let c_end_date = getCookie("end_date");
+  let c_name = getCookie("name");
+
+  if (c_start_date != "") {
+    document.getElementById("start").valueAsNumber = c_start_date;
+  }
+  if (c_end_date != "") {
+    document.getElementById("end").valueAsNumber = c_end_date;
+  }
+  if (c_name != "") {
+    document.getElementById("name").value = c_name;
+  }
+  set_dates();
+}
+
+function show_settings() {
+  document.getElementById("settings_area").style.display = "block";
+  document.getElementById("progress_area").style.display = "none";
+}
+
+function setCookie(cname, cvalue, exdays) {
+  // from https://www.w3schools.com/js/js_cookies.asp
+  const d = new Date();
+  d.setTime(d.getTime() + (exdays*24*60*60*1000));
+  let expires = "expires="+ d.toUTCString();
+  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+
+function getCookie(cname) {
+  // from https://www.w3schools.com/js/js_cookies.asp
+  let name = cname + "=";
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for(let i = 0; i <ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) == ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) == 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return "";
+}
